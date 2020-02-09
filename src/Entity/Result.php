@@ -24,7 +24,7 @@ class Result
     /**
      * @ORM\Column(type="datetime")
      */
-    private $publishedAt;
+    private $obtainedAt;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Learner", inversedBy="results")
@@ -49,14 +49,14 @@ class Result
         return $this;
     }
 
-    public function getPublishedAt(): ?\DateTimeInterface
+    public function getObtainedAt(): ?\DateTimeInterface
     {
-        return $this->publishedAt;
+        return $this->obtainedAt;
     }
 
-    public function setPublishedAt(\DateTimeInterface $publishedAt): self
+    public function setObtainedAt(\DateTimeInterface $obtainedAt): self
     {
-        $this->publishedAt = $publishedAt;
+        $this->obtainedAt = $obtainedAt;
 
         return $this;
     }

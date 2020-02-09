@@ -41,17 +41,7 @@ class Learner
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $work;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Instructor", inversedBy="learners")
-     */
-    private $instructor;
-
-    /**
-     * @ORM\OneToOne(targetEntity="App\Entity\Address", mappedBy="learner", cascade={"persist", "remove"})
-     */
-    private $address;
+    private $job;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Invoice", mappedBy="learner")
@@ -63,12 +53,22 @@ class Learner
      */
     private $results;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Course", mappedBy="learner")
+     */
+    private $courses;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="learners")
+     */
+    private $user;
+
     public function __construct()
     {
         $this->invoices = new ArrayCollection();
         $this->results = new ArrayCollection();
+        $this->courses = new ArrayCollection();
     }
-
 
     public function getId(): ?int
     {
@@ -123,43 +123,14 @@ class Learner
         return $this;
     }
 
-    public function getWork(): ?string
+    public function getJob(): ?string
     {
-        return $this->work;
+        return $this->job;
     }
 
-    public function setWork(?string $work): self
+    public function setJob(?string $job): self
     {
-        $this->work = $work;
-
-        return $this;
-    }
-
-    public function getInstructor(): ?Instructor
-    {
-        return $this->instructor;
-    }
-
-    public function setInstructor(?Instructor $instructor): self
-    {
-        $this->instructor = $instructor;
-
-        return $this;
-    }
-
-    public function getAddress(): ?Address
-    {
-        return $this->address;
-    }
-
-    public function setAddress(Address $address): self
-    {
-        $this->address = $address;
-
-        // set the owning side of the relation if necessary
-        if ($address->getLearner() !== $this) {
-            $address->setLearner($this);
-        }
+        $this->job = $job;
 
         return $this;
     }
@@ -222,6 +193,46 @@ class Learner
                 $result->setLearner(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Course[]
+     */
+    public function getCourses(): Collection
+    {
+        return $this->courses;
+    }
+
+    public function addCourse(Course $course): self
+    {
+        if (!$this->courses->contains($course)) {
+            $this->courses[] = $course;
+            $course->addLearner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCourse(Course $course): self
+    {
+        if ($this->courses->contains($course)) {
+            $this->courses->removeElement($course);
+            $course->removeLearner($this);
+        }
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }
