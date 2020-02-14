@@ -4,15 +4,28 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\LearnerRepository")
- * @ApiResource()
+ * @ApiResource(
+ *     collectionOperations={"GET", "POST"},
+ *     itemOperations={"GET", "PUT", "DELETE"},
+ *      subresourceOperations={
+ *          "invoices_get_subresource"={"path"="/learners/{id}/invoices"},
+ *          "results_get_subresource"={"path"="/learners/{id}/results"},
+ *          "courses_get_subresource"={"path"="/learners/{id}/courses"}
+ *     },
+ *     normalizationContext={
+ *           "groups"={"learners_read"}
+ *     }
+ * )
  * @ApiFilter(SearchFilter::class)
  * @ApiFilter(OrderFilter::class)
  */
@@ -22,51 +35,64 @@ class Learner
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"learners_read","invoices_read", "courses_read", "results_read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"learners_read","invoices_read", "courses_read", "results_read"})
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"learners_read","invoices_read", "courses_read", "results_read"})
      */
     private $lastName;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"learners_read","invoices_read", "courses_read", "results_read"})
      */
     private $email;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"learners_read","invoices_read", "courses_read", "results_read"})
      */
     private $telephone;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"learners_read","invoices_read", "courses_read", "results_read"})
      */
     private $job;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Invoice", mappedBy="learner")
+     * @Groups({"learners_read"})
+     * @ApiSubresource()
      */
     private $invoices;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Result", mappedBy="learner")
+     * @Groups({"learners_read"})
+     * @ApiSubresource()
      */
     private $results;
 
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Course", mappedBy="learner")
+     * @Groups({"learners_read"})
+     * @ApiSubresource()
      */
     private $courses;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="learners")
+     * @Groups({"learners_read","invoices_read", "courses_read", "results_read"})
      */
     private $user;
 
@@ -75,6 +101,30 @@ class Learner
         $this->invoices = new ArrayCollection();
         $this->results = new ArrayCollection();
         $this->courses = new ArrayCollection();
+    }
+
+    /**
+     * #Pour récuperer le montant total des factures
+     * @Groups({"learners_read"})
+     * @return float
+     */
+    public function getTotalAmount(): float
+    {
+        return array_reduce($this->invoices->toArray(), function ($total, $invoice){
+            return $total + $invoice ->getAmount();
+        }, 0);
+    }
+
+    /**
+     * # Pour récuperer le montant total non pays
+     * @Groups({"learners_read"})
+     * @return float
+     */
+    public function getUnpaidAmount(): float
+    {
+        return array_reduce($this->invoices->toArray(), function ($total, $invoice){
+            return $total + ($invoice->getStatus() === "PAID" || $invoice->getStatus() === "CANCELLED" ? 0 : $invoice ->getAmount() );
+        }, 0);
     }
 
     public function getId(): ?int

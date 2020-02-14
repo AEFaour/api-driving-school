@@ -4,15 +4,29 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CourseRepository")
- * @ApiResource()
+ * @ApiResource(
+ *     normalizationContext={
+ *              "groups" = {"courses_read"}
+ *     },
+ *     subresourceOperations={
+ *          "instructors_get_subresource"={"path"="/courses/{id}/invoices"},
+ *          "api_learners_courses_get_subresource"={
+ *              "normalization_context"={"groups"={"courses_subresource"}}
+ *          }
+ *     },
+ *     collectionOperations={"GET", "POST"},
+ *     itemOperations={"GET", "PUT", "DELETE"},
+ * )
  * @ApiFilter(SearchFilter::class)
  * @ApiFilter(OrderFilter::class)
  */
@@ -22,31 +36,38 @@ class Course
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"courses_read", "learners_read", "instructors_read", "courses_subresource"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"courses_read", "learners_read", "instructors_read", "courses_subresource"})
      */
     private $category;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"courses_read", "learners_read", "instructors_read", "courses_subresource"})
      */
     private $duration;
 
     /**
      * @ORM\Column(type="float")
+     * @Groups({"courses_read", "learners_read", "instructors_read", "courses_subresource"})
      */
     private $price;
 
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Learner", inversedBy="courses")
+     * @Groups({"courses_read"})
      */
     private $learner;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Instructor", mappedBy="course")
+     * @Groups({"courses_read"})
+     * @ApiSubresource()
      */
     private $instructors;
 
