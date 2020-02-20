@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\SalaryRepository")
@@ -17,6 +18,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     },
  *     normalizationContext={
  *              "groups" = {"salaries_read"}
+ *     },
+ *     denormalizationContext={
+ *     "disable_type_enforcement"=true
  *     },
  *     subresourceOperations={
  *          "api_learners_courses_instructors_salaries_get_subresource"={
@@ -42,19 +46,24 @@ class Salary
     /**
      * @ORM\Column(type="float")
      * @Groups({"salaries_read", "instructors_read", "salaries_subresource"})
+     * @Assert\NotBlank(message="Veuillez intégrer le montant du salaire, svp")
+     * @Assert\Type(type="numeric", message="Il est impératif que le montant du salaire soit un nombre!")
      */
     private $amount;
 
     /**
      * @ORM\Column(type="datetime")
      * @Groups({"salaries_read", "instructors_read", "salaries_subresource"})
+     * @Assert\NotBlank(message="Veuillez intégrer la date de payement de salaire, svp")
+     * @Assert\Type(type="\DateTime", message="Veuillez respecter le format de la date: YYYY-MM-DD")
      */
     private $paidAt;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Instructor", inversedBy="salaries")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups("salaries_read")
+     * @Groups({"salaries_read", "salaries_subresource"})
+     * @Assert\NotBlank(message="Veuillez ajouter un formateur, svp!")
      */
     private $instructor;
 
@@ -68,7 +77,7 @@ class Salary
         return $this->amount;
     }
 
-    public function setAmount(float $amount): self
+    public function setAmount($amount): self
     {
         $this->amount = $amount;
 
@@ -80,7 +89,7 @@ class Salary
         return $this->paidAt;
     }
 
-    public function setPaidAt(\DateTimeInterface $paidAt): self
+    public function setPaidAt($paidAt): self
     {
         $this->paidAt = $paidAt;
 

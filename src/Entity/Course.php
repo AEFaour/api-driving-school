@@ -11,12 +11,16 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CourseRepository")
  * @ApiResource(
  *     normalizationContext={
  *              "groups" = {"courses_read"}
+ *     },
+ *      denormalizationContext={
+ *     "disable_type_enforcement"=true
  *     },
  *     subresourceOperations={
  *          "instructors_get_subresource"={"path"="/courses/{id}/invoices"},
@@ -43,30 +47,39 @@ class Course
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"courses_read", "learners_read", "instructors_read", "courses_subresource"})
+     * @Assert\NotBlank(message="Veuillez préciser la categorie de stage! ")
+     * @Assert\Choice(choices={"YOUNG", "INTENSIVE", "EXTENSIVE"},
+     *          message="Veuillez choisir une categorie de stage parmi les options suivants : YOUNG, INTENSIVE et EXTENSIVE! ")
      */
     private $category;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"courses_read", "learners_read", "instructors_read", "courses_subresource"})
+     * @Assert\NotBlank(message="Veuillez préciser la durée de stage! ")
+     * @Assert\Choice(choices={"LONG", "SHORT"},
+     *          message="Veuillez choisir une durée de stage parmi les options suivants : LONG et SHORT! ")
      */
     private $duration;
 
     /**
      * @ORM\Column(type="float")
      * @Groups({"courses_read", "learners_read", "instructors_read", "courses_subresource"})
+     * @Assert\NotBlank(message="Veuillez intégrer le prix de stage, svp")
+     * @Assert\Type(type="numeric", message="Il est impératif que le prix de stage e soit un nombre!")
      */
     private $price;
 
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Learner", inversedBy="courses")
      * @Groups({"courses_read"})
+     * @Assert\NotBlank(message="Veuillez indiquer le stagiaire concerné par le stage ")
      */
     private $learner;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Instructor", mappedBy="course")
-     * @Groups({"courses_read"})
+     * @Groups({"courses_read", "courses_subresource"})
      * @ApiSubresource()
      */
     private $instructors;
@@ -111,7 +124,7 @@ class Course
         return $this->price;
     }
 
-    public function setPrice(float $price): self
+    public function setPrice($price): self
     {
         $this->price = $price;
 

@@ -11,6 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\LearnerRepository")
@@ -42,24 +43,33 @@ class Learner
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"learners_read","invoices_read", "courses_read", "results_read"})
+     * @Assert\NotBlank(message="Veuillez ajouter le prénom de stagiaire, svp!")
+     * @Assert\Length(min=3, minMessage="Le prénom doit faire au moins 3 caractères !",
+     * max=255, maxMessage="Le prénom doit faire 255 caractères maximum")
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"learners_read","invoices_read", "courses_read", "results_read"})
+     * @Assert\NotBlank(message="Veuillez ajouter le nom de stagiaire, svp!")
+     * @Assert\Length(min=3, minMessage="Le nom doit faire au moins 3 caractères !",
+     * max=255, maxMessage="Le nom doit faire 255 caractères maximum")
      */
     private $lastName;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"learners_read","invoices_read", "courses_read", "results_read"})
+     * @Assert\NotBlank(message="Veuillez ajouter l'email de stagiaire, svp!")
+     * @Assert\Email(message="Veuillez taper le format de l'email correctement")
      */
     private $email;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"learners_read","invoices_read", "courses_read", "results_read"})
+     * @Assert\NotBlank(message="Veuillez ajouter le numero de téléphone de stagiaire, svp!")
      */
     private $telephone;
 
@@ -93,6 +103,7 @@ class Learner
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="learners")
      * @Groups({"learners_read","invoices_read", "courses_read", "results_read"})
+     * @Assert\NotBlank(message="Veuillez ajouter un utilisateur, svp!")
      */
     private $user;
 

@@ -11,6 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\InstructorRepository")
@@ -18,6 +19,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     normalizationContext={
 
  *     "groups" = {"instructors_read"}
+ *     },
+ *     denormalizationContext={
+ *     "disable_type_enforcement"=true
  *     },
  *     subresourceOperations={
  *          "salaries_get_subresource"={"path"="/instructors/{id}/salaries"},
@@ -44,37 +48,47 @@ class Instructor
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"instructors_read", "salaries_read", "courses_read", "instructors_subresource"})
+     * @Assert\NotBlank(message="Veuillez ajouter le prénom de formateur, svp!")
+     * @Assert\Length(min=3, minMessage="Le prénom doit faire au moins 3 caractères !",
+     * max=255, maxMessage="Le prénom doit faire 255 caractères maximum")
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"instructors_read", "salaries_read", "courses_read", "instructors_subresource"})
+     * @Assert\NotBlank(message="Veuillez ajouter le prénom de formateur, svp!")
+     * @Assert\Length(min=3, minMessage="Le nom doit faire au moins 3 caractères !",
+     * max=255, maxMessage="Le nom doit faire 255 caractères maximum")
      */
     private $lastName;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"instructors_read", "salaries_read", "courses_read", "instructors_subresource"})
+     * @Assert\NotBlank(message="Veuillez ajouter l'email de formateur, svp!")
+     * @Assert\Email(message="Veuillez taper le format de l'email correctement")
      */
     private $email;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"instructors_read", "salaries_read", "courses_read", "instructors_subresource"})
+     * @Assert\NotBlank(message="Veuillez ajouter le numero de téléphone de formateur, svp!")
      */
     private $telephone;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Course", inversedBy="instructors")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"instructors_read"})
+     * @Groups({"instructors_read", "instructors_subresource"})
+     * @Assert\NotBlank(message="Veuillez ajouter un cours, svp!")
      */
     private $course;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Salary", mappedBy="instructor")
-     * @Groups({"instructors_read"})
+     * @Groups({"instructors_read", "instructors_subresource"})
      * @ApiSubresource()
      */
     private $salaries;

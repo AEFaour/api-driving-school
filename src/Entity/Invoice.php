@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\InvoiceRepository")
@@ -26,6 +27,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     itemOperations={"GET", "PUT", "DELETE"},
  *     normalizationContext={
  *              "groups" = {"invoices_read"}
+ *     },
+ *     denormalizationContext={
+ *     "disable_type_enforcement"=true
  *     }
  * )
  * @ApiFilter(OrderFilter::class, properties={"amount", "sentAt"})
@@ -44,18 +48,25 @@ class Invoice
     /**
      * @ORM\Column(type="float")
      * @Groups({"invoices_read", "learners_read", "invoices_subresource"})
+     * @Assert\NotBlank(message="Veuillez intégrer le montant de la facture, svp")
+     * @Assert\Type(type="numeric", message="Il est impératif que le montant de la facture soit un nombre!")
      */
     private $amount;
 
     /**
      * @ORM\Column(type="datetime")
      * @Groups({"invoices_read", "learners_read", "invoices_subresource"})
+     * @Assert\NotBlank(message="Veuillez intégrer la date de l'envoi de la facture, svp")
+     * @Assert\Type(type="\DateTime", message="Veuillez respecter le format de la date: YYYY-MM-DD")
      */
     private $sentAt;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"invoices_read", "learners_read", "invoices_subresource"})
+     * @Assert\NotBlank(message="Veuillez préciser le status de la facture! ")
+     * @Assert\Choice(choices={"SENT", "PAID", "CANCELLED"},
+     *          message="Veuillez choisir un status de la facture parmi les options suivants : SENT, PAID et CANCELLED! ")
      */
     private $status;
 
@@ -63,12 +74,15 @@ class Invoice
      * @ORM\ManyToOne(targetEntity="App\Entity\Learner", inversedBy="invoices")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"invoices_read"})
+     * @Assert\NotBlank(message="Veuillez indiquer le stagiaire concerné par la facture ")
      */
     private $learner;
 
     /**
      * @ORM\Column(type="integer")
      * @Groups({"invoices_read",  "learners_read", "invoices_subresource"})
+     * @Assert\NotBlank(message="Veuillez intégrer le chrono de la facture ")
+     * @Assert\Type(type="integer", message="Il est impératif que le chrono de la facture soit un nombre! " )
      */
     private $chrono;
 
@@ -91,7 +105,7 @@ class Invoice
         return $this->amount;
     }
 
-    public function setAmount(float $amount): self
+    public function setAmount($amount): self
     {
         $this->amount = $amount;
 
@@ -103,7 +117,7 @@ class Invoice
         return $this->sentAt;
     }
 
-    public function setSentAt(\DateTimeInterface $sentAt): self
+    public function setSentAt($sentAt): self
     {
         $this->sentAt = $sentAt;
 
@@ -139,7 +153,7 @@ class Invoice
         return $this->chrono;
     }
 
-    public function setChrono(int $chrono): self
+    public function setChrono($chrono): self
     {
         $this->chrono = $chrono;
 
