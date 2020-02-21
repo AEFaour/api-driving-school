@@ -17,6 +17,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @ApiResource(
+ *     normalizationContext={"groups" = {"users_read"}},
  *     collectionOperations={"GET", "POST"},
  *     itemOperations={"GET", "PUT", "DELETE"},
  * )
@@ -30,13 +31,13 @@ class User implements UserInterface
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"learners_read", "invoices_read", "courses_read", "results_read"})
+     * @Groups({"learners_read", "invoices_read", "courses_read", "results_read", "users_read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
-     * @Groups({"learners_read", "invoices_read", "courses_read", "results_read"})
+     * @Groups({"learners_read", "invoices_read", "courses_read", "results_read", "users_read"})
      * @Assert\NotBlank(message="Il est impératif d'intégrer le mail élctronique ! ")
      * @Assert\Email(message="Il est impératif que la mail soit valid")
      */
@@ -44,7 +45,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="json")
-     * @Groups({"learners_read", "invoices_read", "courses_read", "results_read"})
+     * @Groups({"learners_read", "invoices_read", "courses_read", "results_read", "users_read"})
      */
     private $roles = [];
 
@@ -58,7 +59,7 @@ class User implements UserInterface
 
     /** "invoices_read"
      * @ORM\Column(type="string", length=255)
-     * @Groups({"learners_read", "invoices_read", "courses_read", "results_read"})
+     * @Groups({"learners_read", "invoices_read", "courses_read", "results_read", "users_read"})
      * @Assert\NotBlank(message="Il est impératif d'intégrer le prénom ! ")
      * @Assert\Length(min=3, minMessage="Il est impératif que le prénom fasse entre 3 et 255 caractères",
      *     max=255, maxMessage="Il est impératif que le prénom fasse entre 3 et 255 caractères")
@@ -67,7 +68,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"learners_read", "invoices_read", "courses_read", "results_read"})
+     * @Groups({"learners_read", "invoices_read", "courses_read", "results_read", "users_read"})
      * @Assert\NotBlank(message="Il est impératif d'intégrer le nom ! ")
      * @Assert\Length(min=3, minMessage="Il est impératif que le nom fasse entre 3 et 255 caractères",
      *     max=255, maxMessage="Il est impératif que le nom fasse entre 3 et 255 caractères")
