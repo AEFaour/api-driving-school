@@ -19,6 +19,7 @@
         "@material-ui/icons": "^4.9.1",
         "@material-ui/lab": "^4.0.0-alpha.45",
         "axios": "^0.18.1",
+        "jwt-decode": "^2.2.0",
         "moment": "^2.24.0",
         "react": "^16.8.6",
         "react-dom": "^16.8.6",

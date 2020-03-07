@@ -1,41 +1,72 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-
+import homeLogin from "../methods/homeLogin";
+import {
+    AppBar, Toolbar, Typography, Button
+} from "@material-ui/core";
+import {NavLink} from "react-router-dom";
+import ContextAuth from "../contexts/ContextAuth";
 
 const useStyles = makeStyles(theme => ({
     root: {
         flexGrow: 1,
-        fontFamily : 'Times New Roman',
+        fontFamily: 'Times New Roman',
     },
     title: {
         flexGrow: 1,
-        fontFamily : 'Times New Roman',
+        fontFamily: 'Times New Roman',
+    },
+    navlink: {
+        color: theme.palette.common.white,
     },
 }));
 
-const Navbar = (props) => {
-
+const Navbar = ({history}) => {
+    const {isAuthenticated, setIsAuthenticated} = useContext(ContextAuth);
+    const handleLogout = () => {
+        homeLogin.logout();
+        setIsAuthenticated(false);
+        history.push("/home");
+    }
     const classes = useStyles();
     return (
         <div className={classes.root}>
             <AppBar position="static">
                 <Toolbar>
                     <Typography variant="h6" className={classes.title}>
-                        Auto Ecole
+                    <NavLink to="/home" className={classes.navlink}>
+                            Auto Ecole
+                    </NavLink>
                     </Typography>
-                    <Button color="inherit">Stagiaires</Button>
-                    <Button color="inherit">Factures</Button>
-                    <Button color="inherit">Resultats</Button>
-                    <Button color="inherit">Cours</Button>
-                    <Button color="inherit">Formateurs</Button>
-                    <Button color="inherit">Salaires</Button>
-                    <Button color="inherit">Inscription</Button>
-                    <Button color="inherit">Connexion</Button>
-                    <Button color="inherit">Déconnexion</Button>
+                    <Button color="inherit">
+                        <NavLink to="/learners" className={classes.navlink}>Stagiaires</NavLink>
+                    </Button>
+                    <Button color="inherit">
+                        <NavLink to="/invoices" className={classes.navlink}>Factures</NavLink>
+                    </Button>
+                    <Button color="inherit">
+                        <NavLink to="/results" className={classes.navlink}>Resultats</NavLink>
+                    </Button>
+                    <Button color="inherit">
+                        <NavLink to="/courses" className={classes.navlink}>Cours</NavLink>
+                    </Button>
+                    <Button color="inherit">
+                        <NavLink to="/instructors" className={classes.navlink}>Formateurs</NavLink>
+                    </Button>
+                    <Button color="inherit">
+                        <NavLink to="/salaries" className={classes.navlink}>Salaires</NavLink>
+                    </Button>
+                    {(!isAuthenticated && (<>
+                        <Button color="inherit" className={classes.navlink}>Inscription</Button>
+                        <Button color="inherit">
+                            <NavLink to="/home" className={classes.navlink}>Connexion</NavLink>
+                        </Button>
+                    </>
+                    )) || (
+                        <Button color="inherit" onClick={handleLogout}>
+                            <NavLink to="/home" className={classes.navlink}>Déconnexion</NavLink>
+                        </Button>
+                    )}
                 </Toolbar>
             </AppBar>
         </div>
