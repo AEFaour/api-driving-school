@@ -2,6 +2,7 @@ import axios from "axios";
 import jwtDecode from "jwt-decode";
 
 /**
+ * token JWT sur axios
  * @param token
  */
 function setAxiosToken(token) {
@@ -9,6 +10,7 @@ function setAxiosToken(token) {
 }
 
 /**
+ * Requête http post pour authentification et stockage du token (localStorage & axios)
  * @param credentials
  * @returns {Promise<boolean>}
  */
@@ -24,10 +26,17 @@ function authLogin(credentials) {
         });
 }
 
+/**
+ * Déconnexion et suppression du token du localStorage et sur axios
+ */
 function logout() {
     window.localStorage.removeItem("authToken");
     delete axios.defaults.headers["Authorization"];
 }
+
+/**
+ * Mise à jour de l'application
+ */
 
 function setup() {
     const token = window.localStorage.getItem("authToken");
@@ -41,7 +50,7 @@ function setup() {
 }
 
 /**
- *
+ * Verification de l'authentification
  * @returns {boolean}
  */
 function isAuthenticated() {
