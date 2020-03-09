@@ -2,7 +2,7 @@ import React, {useContext, useState} from "react";
 import {makeStyles} from '@material-ui/core/styles';
 import {
     Card, Typography, FormControl, Box,
-    Button, Input, InputLabel, Container, TextField
+    Button, Container, TextField
 } from "@material-ui/core";
 import HomeLogin from "../methods/homeLogin";
 import ContextAuth from "../contexts/ContextAuth";
@@ -15,7 +15,7 @@ const useStyles = makeStyles(theme => ({
     },
     title: {
         minHeight: 100,
-        marginTop: 25,
+        marginTop: 75,
     },
     btn: {
         margin: theme.spacing(1),

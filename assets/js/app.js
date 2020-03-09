@@ -4,7 +4,9 @@ import {HashRouter, Switch, Route, withRouter} from "react-router-dom";
 import '../css/app.css';
 import Navbar from "./components/Navbar";
 import HomePage from "./pages/HomePage";
+import LearnerPage from "./pages/LearnerPage";
 import LearnersPage from "./pages/LearnersPage";
+import InvoicePage from "./pages/InvoicePage";
 import InvoicesPage from "./pages/InvoicesPage";
 import ResultsPage from "./pages/ResultsPage";
 import CoursesPage from "./pages/CoursesPage";
@@ -13,14 +15,16 @@ import SalariesPage from "./pages/SalariesPage";
 import homeLogin from "./methods/homeLogin";
 import ContextAuth from "./contexts/ContextAuth";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AddPage from "./pages/AddPage";
+
 
 homeLogin.setup();
+
 
 const App = () => {
     //Verification de la connexion
     const [isAuthenticated, setIsAuthenticated] = useState(homeLogin.isAuthenticated());
     const NavbarRoute = withRouter(Navbar);
-
     return (
         <ContextAuth.Provider value={{
             isAuthenticated,
@@ -28,11 +32,13 @@ const App = () => {
         }} >
             <HashRouter>
                 <NavbarRoute />
-                <main className="container pt-5">
+                <main>
                     <Switch>
-                        <Route path="/home" component={HomePage} />}
-                        />
+                        <Route path="/home" component={HomePage} />} />
+                        <Route path="/add" component={AddPage} />} />
+                        <ProtectedRoute path="/learners/:id" component={LearnerPage} />
                         <ProtectedRoute path="/learners" component={LearnersPage} />
+                        <ProtectedRoute path="/invoices/:id" component={InvoicePage} />
                         <ProtectedRoute path="/invoices" component={InvoicesPage} />
                         <ProtectedRoute path="/results" component={ResultsPage} />
                         <ProtectedRoute path="/courses" component={CoursesPage} />

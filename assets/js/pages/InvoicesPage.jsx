@@ -3,12 +3,14 @@ import {withStyles, makeStyles} from '@material-ui/core/styles';
 import invoicesCRUD from "../methods/invoicesCRUD";
 import {
     Table, TableBody, TableCell, TableHead,
-    TableRow, Card, Link, Typography,
+    TableRow, Card, Typography,
     Button, FormControl, Input, InputLabel
 } from "@material-ui/core";
 import Pagination from "@material-ui/lab/Pagination";
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
+import CreateIcon from "@material-ui/icons/Create"
 import moment from "moment";
+import {Link} from 'react-router-dom';
 
 const StyledTableCell = withStyles(theme => ({
     head: {
@@ -31,19 +33,24 @@ const StyledTableRow = withStyles(theme => ({
 const useStyles = makeStyles({
     table: {
         minWidth: 700,
-        fontFamily : 'Times New Roman',
+        fontFamily: 'Times New Roman',
     },
     title: {
         minHeight: 100,
-        marginTop: 25,
+        marginTop: 75,
+        display: 'block'
     },
     search: {
         marginBottom: 25,
     },
     typo: {
-        fontFamily : 'Times New Roman',
+        fontFamily: 'Times New Roman',
         marginTop: 15,
         marginBottom: 15,
+    },
+    create: {
+        float:'right',
+        margin: 10,
     }
 });
 
@@ -106,8 +113,14 @@ const InvoicesPage = (props) => {
         <>
             <Card className={classes.title}>
                 <Typography className={classes.typo} variant="h3" align="center" color="inherit">Liste des Factures</Typography>
-
+                <Link to="/invoices/new">
+                    <Button className={classes.create} variant="contained" color="secondary">
+                        Créer une Facture
+                        <CreateIcon />
+                    </Button>
+                </Link>
             </Card>
+
             <Card className={classes.search}>
                 <FormControl fullWidth={true} size="medium">
                     <InputLabel htmlFor="my-input" color="primary">Rechercher ...</InputLabel>
@@ -115,7 +128,6 @@ const InvoicesPage = (props) => {
                            value={search}/>
                 </FormControl>
             </Card>
-
             <Table className={classes.table} aria-label="customized table">
                 <TableHead>
                     <TableRow>
@@ -125,7 +137,7 @@ const InvoicesPage = (props) => {
                         <StyledTableCell align="center">Date de l'envoi</StyledTableCell>
                         <StyledTableCell align="center">Status</StyledTableCell>
                         <StyledTableCell align="center">Montant</StyledTableCell>
-                        <StyledTableCell align="center">Actions</StyledTableCell>
+                        <StyledTableCell align="center">Supprimer</StyledTableCell>
 
                     </TableRow>
                 </TableHead>
@@ -136,7 +148,7 @@ const InvoicesPage = (props) => {
                                 {invoice.id}
                             </StyledTableCell>
                             <StyledTableCell align="center">
-                                <Link to={"#"}>{invoice.learner.firstName} {invoice.learner.lastName}</Link>
+                                <Link to={"/invoices/" + invoice.id}>{invoice.learner.firstName} {invoice.learner.lastName}</Link>
                             </StyledTableCell>
                             <StyledTableCell align="center">{invoice.chrono}</StyledTableCell>
                             <StyledTableCell align="center">{formatDate(invoice.sentAt)}</StyledTableCell>

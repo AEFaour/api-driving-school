@@ -35,7 +35,7 @@ const useStyles = makeStyles({
     },
     title: {
         minHeight: 100,
-        marginTop: 25,
+        marginTop: 75,
     },
     search: {
         marginBottom: 25,
@@ -122,7 +122,7 @@ const CoursesPage = (props) => {
                         <StyledTableCell align="center">Durée</StyledTableCell>
                         <StyledTableCell align="center">Prix</StyledTableCell>
                         <StyledTableCell align="center">Formateurs</StyledTableCell>
-                        <StyledTableCell align="center">Actions</StyledTableCell>
+                        <StyledTableCell align="center">Supprimer</StyledTableCell>
 
                     </TableRow>
                 </TableHead>

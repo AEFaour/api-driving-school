@@ -34,7 +34,7 @@ const useStyles = makeStyles({
     },
     title: {
         minHeight: 100,
-        marginTop: 25,
+        marginTop: 75,
     },
     search: {
         marginBottom: 25,
@@ -119,7 +119,7 @@ const InstructorsPage = (props) => {
                         <StyledTableCell align="center">Téléphone</StyledTableCell>
                         <StyledTableCell align="center">Cours</StyledTableCell>
                         <StyledTableCell align="center">Salaires</StyledTableCell>
-                        <StyledTableCell align="center">Actions</StyledTableCell>
+                        <StyledTableCell align="center">Supprimer</StyledTableCell>
 
                     </TableRow>
                 </TableHead>

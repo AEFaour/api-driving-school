@@ -3,11 +3,13 @@ import {withStyles, makeStyles} from '@material-ui/core/styles';
 import learnersCRUD from "../methods/learnersCRUD";
 import {
     Table, TableBody, TableCell, TableHead,
-    TableRow, Card, Link, Typography,
+    TableRow, Card, Typography, Grid,
     Button, FormControl, Input, InputLabel
 } from "@material-ui/core";
 import Pagination from '@material-ui/lab/Pagination';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
+import CreateIcon from '@material-ui/icons/Create';
+import {Link} from 'react-router-dom';
 
 
 const StyledTableCell = withStyles(theme => ({
@@ -35,16 +37,27 @@ const useStyles = makeStyles({
         fontFamily: 'Times New Roman',
     },
     title: {
+        minWidth: 1080,
         minHeight: 100,
-        marginTop: 25,
+        marginTop: 75,
+        display: 'block'
     },
     search: {
+        minWidth: 1080,
         marginBottom: 25,
+
     },
     typo: {
         fontFamily: 'Times New Roman',
         marginTop: 15,
         marginBottom: 15,
+    },
+    create: {
+        float:'right',
+        margin: 10,
+    },
+    icon: {
+        margin: 1,
     }
 });
 
@@ -107,10 +120,19 @@ const LearnersPage = (props) => {
 
     return (
         <>
-            <Card className={classes.title}>
-                <Typography className={classes.typo} variant="h3" align="center" color="inherit">Liste des
-                    Stagiaires</Typography>
-            </Card>
+
+            <Grid container spacing={3}>
+                <Grid item xs={12}>
+                <Card className={classes.title}>
+                    <Typography className={classes.typo}  variant="h3" align="center" color="inherit">Liste des
+                        Stagiaires</Typography>
+                    <Link to="/learners/new">
+                        <Button className={classes.create} variant="contained" color="secondary">
+                            Créer un Stagiaire
+                            <CreateIcon />
+                        </Button>
+                    </Link>
+                </Card>
 
             <Card className={classes.search}>
                 <FormControl fullWidth={true} size="medium">
@@ -119,52 +141,54 @@ const LearnersPage = (props) => {
                            value={search}/>
                 </FormControl>
             </Card>
+                </Grid>
+            </Grid>
+                <Table className={classes.table} aria-label="customized table">
+                    <TableHead>
+                        <TableRow>
+                            <StyledTableCell align="center">Code</StyledTableCell>
+                            <StyledTableCell align="center">Stagiaire</StyledTableCell>
+                            <StyledTableCell align="center">Email</StyledTableCell>
+                            <StyledTableCell align="center">Téléphone</StyledTableCell>
+                            <StyledTableCell align="center">Job</StyledTableCell>
+                            <StyledTableCell align="center">Cours</StyledTableCell>
+                            <StyledTableCell align="center">Reslutats</StyledTableCell>
+                            <StyledTableCell align="center">Factures</StyledTableCell>
+                            <StyledTableCell align="center">Montant Total</StyledTableCell>
+                            <StyledTableCell align="center">Supprimer</StyledTableCell>
 
-            <Table className={classes.table} aria-label="customized table">
-                <TableHead>
-                    <TableRow>
-                        <StyledTableCell align="center">Code</StyledTableCell>
-                        <StyledTableCell align="center">Stagiaire</StyledTableCell>
-                        <StyledTableCell align="center">Email</StyledTableCell>
-                        <StyledTableCell align="center">Téléphone</StyledTableCell>
-                        <StyledTableCell align="center">Job</StyledTableCell>
-                        <StyledTableCell align="center">Cours</StyledTableCell>
-                        <StyledTableCell align="center">Reslutats</StyledTableCell>
-                        <StyledTableCell align="center">Factures</StyledTableCell>
-                        <StyledTableCell align="center">Montant Total</StyledTableCell>
-                        <StyledTableCell align="center">Actions</StyledTableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {paginatedLearners.map(learner => (
+                            <StyledTableRow key={learner.id}>
+                                <StyledTableCell component="th" scope="row" align="center">
+                                    {learner.id}
+                                </StyledTableCell>
+                                <StyledTableCell align="center">
+                                    <Link to={"/learners/" + learner.id}>{learner.firstName} {learner.lastName}</Link>
+                                </StyledTableCell>
+                                <StyledTableCell align="center">{learner.email}</StyledTableCell>
+                                <StyledTableCell align="center">{learner.telephone}</StyledTableCell>
+                                <StyledTableCell align="center">{learner.job}</StyledTableCell>
+                                <StyledTableCell align="center">{learner.courses.length}</StyledTableCell>
+                                <StyledTableCell align="center">{learner.results.length}</StyledTableCell>
+                                <StyledTableCell align="center">{learner.invoices.length}</StyledTableCell>
+                                <StyledTableCell align="center">{learner.totalAmount.toLocaleString()} €</StyledTableCell>
+                                <StyledTableCell align="center">
+                                    <Button
+                                        onClick={() => handleDelete(learner.id)}
+                                        variant="contained"
+                                        color="secondary"
+                                        disabled={learner.invoices.length > 0}>
+                                        <DeleteOutlineIcon />
+                                    </Button>
+                                </StyledTableCell>
+                            </StyledTableRow>
+                        ))}
+                    </TableBody>
+                </Table>
 
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {paginatedLearners.map(learner => (
-                        <StyledTableRow key={learner.id}>
-                            <StyledTableCell component="th" scope="row" align="center">
-                                {learner.id}
-                            </StyledTableCell>
-                            <StyledTableCell align="center">
-                                <Link href="#">{learner.firstName} {learner.lastName}</Link>
-                            </StyledTableCell>
-                            <StyledTableCell align="center">{learner.email}</StyledTableCell>
-                            <StyledTableCell align="center">{learner.telephone}</StyledTableCell>
-                            <StyledTableCell align="center">{learner.job}</StyledTableCell>
-                            <StyledTableCell align="center">{learner.courses.length}</StyledTableCell>
-                            <StyledTableCell align="center">{learner.results.length}</StyledTableCell>
-                            <StyledTableCell align="center">{learner.invoices.length}</StyledTableCell>
-                            <StyledTableCell align="center">{learner.totalAmount.toLocaleString()} €</StyledTableCell>
-                            <StyledTableCell align="center">
-                                <Button
-                                    onClick={() => handleDelete(learner.id)}
-                                    variant="contained"
-                                    color="secondary"
-                                    disabled={learner.invoices.length > 0}>
-                                    <DeleteOutlineIcon />
-                                </Button>
-                            </StyledTableCell>
-                        </StyledTableRow>
-                    ))}
-                </TableBody>
-            </Table>
 
             {itemsPerPage < filteredLearners.length && <Pagination
                 count={pagesCount}

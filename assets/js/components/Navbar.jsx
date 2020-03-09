@@ -31,7 +31,7 @@ const Navbar = ({history}) => {
     const classes = useStyles();
     return (
         <div className={classes.root}>
-            <AppBar position="static">
+            <AppBar position="fixed">
                 <Toolbar>
                     <Typography variant="h6" className={classes.title}>
                     <NavLink to="/home" className={classes.navlink}>
